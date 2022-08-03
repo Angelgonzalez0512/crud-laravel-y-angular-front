@@ -35,8 +35,8 @@ export class EditInscripcionComponent implements OnInit {
           
           if(data.success)  {
             const {birthdate,inscription_date,...others}=data.data;
-          let birthdate1= this.dp.transform(moment(birthdate).date(), 'yyyy-MM-dd');
-          let inscription_date1= this.dp.transform(moment(inscription_date).date(), 'yyyy-MM-dd');
+          let birthdate1= this.dp.transform(moment(birthdate).format("MM-DD-YYYY"), 'yyyy-MM-dd');
+          let inscription_date1= this.dp.transform(moment(inscription_date).format("MM-DD-YYYY"), 'yyyy-MM-dd');
             this.fcreate.setValue({ ...others,birthdate:birthdate1,inscription_date:inscription_date1 });
           }
         });
