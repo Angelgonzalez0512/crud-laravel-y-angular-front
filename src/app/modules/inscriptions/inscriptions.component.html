@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="w-100 d-flex justify-content-between">
+                <h4 >
+                    Inscripciones
+                </h4>
+                <button class="btn btn-primary" routerLink="create"> <i class="fa fa-plus-circle mx-2"></i> Agregar</button>
+            </div>
+           
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Fecha de nacimiento</th>
+                        
+                        <th>Edad</th>
+                        <th>Fecha de Inscripcion</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let inscription of inscriptions">
+                        <td><i class="fa fa-edit mx-2" [routerLink]="['edit',inscription.id]"></i> <i class="fa fa-trash" (click)="delete(inscription)"></i></td>
+                        <td>{{inscription.id}}</td>
+                        <td>{{inscription.name}}</td>
+                        <td>{{inscription.birthdate |date:'dd/MM/YYYY'}}</td>
+                        <td>{{inscription.age}}</td>
+                        <td>{{inscription.inscription_date  |date:'dd/MM/YYYY'}}</td>
+                        <th>$ {{inscription.price}}</th>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>

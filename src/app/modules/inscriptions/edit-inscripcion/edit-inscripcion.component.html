@@ -1,0 +1,49 @@
+<div class="container"><br>
+    <div class="card">
+        <div class="card-body">
+            <form [formGroup]="fcreate" (submit)="editInscription()">
+                <small *ngIf="error_message" class="w-100 text-danger text-center">{{error_message}}</small>
+                <div class="form-group mt-2">
+                    <label for="nombre" class="my-1">Nombre</label>
+                    <input type="text" formControlName="name" name="nombre" id="nombre" class="form-control">
+                    <span *ngIf="getError('name')?.required" class="text-danger">
+                        El nombre es requerido
+                    </span>
+                    <span *ngIf="getError('name')?.lengthname" class="text-danger">
+                        Debe ingresar dos nombres
+                    </span>
+                    <span *ngIf="getError('name')?.lengthnamecharacter" class="text-danger">
+                        Cada nombre debe tener  4 caracteres
+                    </span>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="birthdate" class="my-1">Fecha Nacimiento</label>
+                    <input type="date" formControlName="birthdate" name="birthdate" id="birthdate" class="form-control">
+                    <span *ngIf="getError('birthdate')?.datevalid" class="text-danger">{{getError('birthdate')?.datevalid}}</span>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="age" class="my-1">Edad</label>
+                    <input type="number" formControlName="age" name="age" id="age" class="form-control">
+                    <span *ngIf="getError('age')?.minage" class="text-danger">{{getError('age')?.minage}}</span>
+                    <span class="text-danger" *ngIf="getError('age')?.agewhitbirthdate">{{getError('age')?.agewhitbirthdate}}</span>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="inscription_date" class="my-1">Fecha de inscripcion</label>
+                    <input type="date" formControlName="inscription_date" name="inscription_date" id="inscription_date" class="form-control">
+                    <span *ngIf="getError('inscription_date')?.datevalid" class="text-danger">{{getError('inscription_date')?.datevalid}}</span>
+               
+                </div>
+                <div class="form-group mt-2">
+                    <label for="price" class="my-1">Costo</label>
+                    <input type="number" formControlName="price" name="price" id="price" class="form-control">
+                </div>
+                <div class="w-100 d-flex justify-content-end mt-4">
+                    
+                    
+                    <button type="submit" class="btn btn-danger" routerLink="/">Volver</button>
+                    <button type="submit" class="btn btn-primary mx-2"> <i class="fa fa-save"></i> Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
