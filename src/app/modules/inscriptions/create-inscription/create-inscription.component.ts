@@ -11,19 +11,22 @@ import { InscriptionService } from 'src/app/core/services/inscription.service';
 })
 export class CreateInscriptionComponent implements OnInit {
   fcreate: FormGroup;
-  error_message="";
-  constructor(private fb: FormBuilder, private router:Router,private dp: DatePipe, private inscriptionService:InscriptionService) {
+  error_message = "";
+  constructor(private fb: FormBuilder, private router: Router, private dp: DatePipe, private inscriptionService: InscriptionService) {
     this.fcreate = this.fb.group({
       name: ['', [Validators.required, this.validateName]],
-      age: ['', [Validators.required, this.validateAge]],
-      birthdate: ['', [Validators.required,this.validateBirthDate]],
+      age: ['', [Validators.required]],
+      birthdate: ['', [Validators.required, this.validateBirthDate]],
       price: ['', [Validators.required]],
       inscription_date: ['', [Validators.required, this.validateInscriptionDate]],
+
+    }, {
+      validators: [this.validateAge, this.validatePayment]
     });
   }
 
   ngOnInit(): void {
-   
+
   }
   private validateName(control: AbstractControl) {
     const name = control.value;
@@ -44,21 +47,37 @@ export class CreateInscriptionComponent implements OnInit {
     return error;
   }
   private validateAge(control: AbstractControl) {
-    const age = control.value;
-    let error = {};
-    if (age) {
-      if (age < 18) {
-        error = { ...error, minage: "El usuario debe ser mayor de 18 años" };
+    const age1 = control.get('age');
+    if (age1) {
+      let age = age1.value;
+      if (age) {
+        if (age < 18) {
+          control.get("age")?.setErrors(
+            {
+              minage: "El usuario debe ser mayor de 18 años"
+            }
+          )
+        }
+        let birthdate = control.get("birthdate");
+        if (birthdate) {
+          if (moment().diff(moment(birthdate.value), 'years') != age) {
+            control.get("age")?.setErrors(
+              {
+                ageandbirthdateinvalid: "La edad no coincide con la fecha de nacimiento"
+              }
+            )
+          }
+        }
       }
-      /*  */
     }
-    return error;
+
+
   }
   private validateBirthDate(control: AbstractControl) {
     const birthdate = control.value;
     let error = {};
     if (birthdate) {
-      if (!moment().diff(birthdate, 'days')  || moment().diff(birthdate, 'years') < 18) {
+      if (!moment().diff(birthdate, 'days') || moment().diff(birthdate, 'years') < 18) {
         error = { ...error, datevalid: "Seleccione una fecha de nacimiento valida" };
       }
     }
@@ -74,41 +93,41 @@ export class CreateInscriptionComponent implements OnInit {
     }
     return error;
   }
-  createInscription() {
-  
-    if(this.fcreate.valid){
-      let date=this.fcreate.value.birthdate;
-      let amount=this.fcreate.value.price;
-      let inscription_date=this.fcreate.value.inscription_date;
-      let ageandbithday=true;
-      let inscripcionandprice=true;
-      if (date) {
-        if (moment().diff(moment(date), 'years') != this.fcreate.value.age) {
-          console.log(moment().diff(moment(date), 'years'));
-          ageandbithday=false;
-        }
-      }
-      if (inscription_date){
-          let years=moment().diff(moment(inscription_date), 'years');
-          console.log(years);
-         years==0?years=1:years=years;
-          let montoapagar=years*100;
-          if(montoapagar!=amount){
-            inscripcionandprice=false;
+  private validatePayment(control: AbstractControl) {
+    let inscription_date1 = control.get("inscription_date");
+    let price1 = control.get("price");
+    if (inscription_date1 && price1) {
+      let inscription_date = inscription_date1.value;
+      let price = price1.value;
+      let years = moment().diff(moment(inscription_date), 'years');
+      console.log(years);
+      years == 0 ? years = 1 : years = years;
+      let montoapagar = years * 100;
+      if (montoapagar != price) {
+        control.get("price")?.setErrors(
+          {
+            paymentinvalid: "El monto a pagar no coincide con el tiempo de inscripcion"
           }
-      }
-
-      if(ageandbithday && inscripcionandprice){
-      this.inscriptionService.create(this.fcreate.value).subscribe(data=>{
-        console.log(data);
-        if(data.success){
-            this.router.navigate(['/']);
-        } 
-      });}else{
-        this.error_message="Los datos no coinciden revise que la fecha de nacimiento y la fecha de inscripcion coincidan con el pago y su edad";
+        )
       }
     }
-    
+  }
+
+  createInscription() {
+
+    if (this.fcreate.valid) {
+
+      this.inscriptionService.create(this.fcreate.value).subscribe(data => {
+        console.log(data);
+        if (data.success) {
+          this.router.navigate(['/']);
+        }
+      });
+
+    } else {
+      this.error_message = "Complete correctamente el fomulario para continuar";
+    }
+
   }
   public getError(controlName: string): any {
     let error: any = {};
